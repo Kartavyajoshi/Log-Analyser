@@ -1,8 +1,8 @@
-__pycache__/
-*.pyc
-.pytest_cache/
-.venv/
-.env
-coverage.xml
-htmlcov/
-*.log
+from .analyzer import AnalysisReport, analyze_log_file, analyze_text
+
+__all__ = ["AnalysisReport", "analyze_log_file", "analyze_text"]
+__version__ = "0.2.0"
+
+from .gui import run_gui
+
+__all__ += ["run_gui"]

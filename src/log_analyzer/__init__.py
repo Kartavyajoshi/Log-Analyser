@@ -1,3 +1,4 @@
-# Log Analyzer
+from .gui import run_gui
 
-A lightweight CLI utility for analyzing log files and reporting suspicious patterns.
+if __name__ == "__main__":
+    run_gui()
