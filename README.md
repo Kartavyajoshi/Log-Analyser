@@ -1,22 +1,45 @@
 # Log-Analyser
 
-A lightweight, production-ready log analyzer built in Python for scanning application, web, and system logs, extracting patterns, and surfacing suspicious activity.
+A lightweight Python log analysis tool with both a command-line interface and a desktop GUI. It parses application, web, and system logs and highlights suspicious activity.
 
-## Features
+## GUI mode
 
-- Parse common log formats, including:
-  - standard application logs
-  - Apache/Nginx access logs
-  - error and warning lines
-- Count log levels and suspicious events
-- Detect common security indicators such as:
-  - failed authentication
-  - permission denied
-  - invalid requests
-  - exceptions and tracebacks
-  - timeout and crash patterns
-- Generate structured summaries for investigation and reporting
-- Run as a CLI script or import as a Python library
+The GUI uses Python's built-in Tkinter library, so no extra GUI dependency is required.
+
+```bash
+python -m log_analyzer
+```
+
+The desktop application lets you:
+
+- open `.log` and `.txt` files
+- paste log data directly into the editor
+- analyze levels, HTTP status codes, IP addresses, and suspicious events
+- inspect a formatted JSON report
+- export the report as a JSON file
+
+On Linux, install Tkinter if it is not already available:
+
+```bash
+# Debian/Ubuntu
+sudo apt install python3-tk
+```
+
+## CLI mode
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+pip install -e .
+python -m log_analyzer.cli ./sample.log --json
+```
+
+For a readable terminal report:
+
+```bash
+python -m log_analyzer.cli ./sample.log
+```
 
 ## Project structure
 
@@ -25,56 +48,19 @@ A lightweight, production-ready log analyzer built in Python for scanning applic
 ├── README.md
 ├── pyproject.toml
 ├── requirements.txt
-├── src/
-│   └── log_analyzer/
-│       ├── __init__.py
-│       ├── __main__.py
-│       ├── analyzer.py
-│       ├── cli.py
-│       └── models.py
+├── src/log_analyzer/
+│   ├── analyzer.py
+│   ├── cli.py
+│   ├── gui.py
+│   ├── models.py
+│   └── __main__.py
 └── tests/
     └── test_analyzer.py
 ```
 
-## Quick start
+## Detection capabilities
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-pip install -r requirements.txt
-python -m log_analyzer.cli ./sample.log --json
-```
-
-## Example usage
-
-```bash
-python -m log_analyzer.cli /var/log/nginx/access.log --top 10
-python -m log_analyzer.cli ./logs/app.log --json --limit 25
-```
-
-## Example output
-
-```text
-Log analysis summary
-====================
-File: ./logs/app.log
-Total entries: 124
-INFO: 72
-WARNING: 18
-ERROR: 28
-CRITICAL: 6
-Unique IPs: 13
-Suspicious events: 9
-
-Top error messages:
-  - Permission denied for user admin: 7
-  - Failed login attempt: 5
-  - Exception in worker pool: 3
-```
-
-## Why this project matters
-
-Log analysis is vital for incident response, system health monitoring, and security investigations. This project gives you a practical foundation for scanning logs, identifying anomalies, and turning raw events into actionable intelligence.
+The analyzer recognizes common application log levels, Apache/Nginx access logs, syslog-style entries, HTTP status codes, IP addresses, authentication failures, permission errors, exceptions, timeouts, and other suspicious indicators.
 
 ## License
 

@@ -1,4 +1,7 @@
-from .analyzer import AnalysisReport, analyze_log_file, analyze_text
+"""Launch the graphical Log-Analyser application."""
 
-__all__ = ["AnalysisReport", "analyze_log_file", "analyze_text"]
-__version__ = "0.1.0"
+from .gui import run_gui
+
+
+if __name__ == "__main__":
+    run_gui()
