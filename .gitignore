@@ -1,0 +1,42 @@
+import tempfile
+import unittest
+from pathlib import Path
+
+from log_analyzer.analyzer import analyze_text
+
+
+class TestAnalyzer(unittest.TestCase):
+    def test_analyze_text_detects_levels_and_suspicious_content(self):
+        sample = """
+2024-01-01T12:00:00Z INFO request received from 10.0.0.2
+2024-01-01T12:00:01Z ERROR Permission denied for user admin
+2024-01-01T12:00:02Z WARNING Failed login attempt from 10.0.0.8
+127.0.0.1 - - [01/Jan/2024:12:00:04 +0000] "GET /admin HTTP/1.1" 401 134
+45.123.45.67 - - [01/Jan/2024:12:00:06 +0000] "GET /login HTTP/1.1" 500 672
+""".strip()
+
+        report = analyze_text(sample)
+
+        self.assertGreater(report.total_lines, 0)
+        self.assertGreaterEqual(report.parsed_entries, 3)
+        self.assertIn("ERROR", report.levels)
+        self.assertIn("WARNING", report.levels)
+        self.assertGreaterEqual(len(report.suspicious_events), 1)
+        self.assertGreaterEqual(len(report.unique_ips), 1)
+
+    def test_analyze_text_handles_file_based_input(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "app.log"
+            path.write_text(
+                "2024-01-01T12:00:00Z INFO service started\n"
+                "2024-01-01T12:00:01Z ERROR Exception in worker thread\n",
+                encoding="utf-8",
+            )
+
+            report = analyze_text(path.read_text(encoding="utf-8"))
+            self.assertEqual(report.total_lines, 2)
+            self.assertEqual(report.levels["ERROR"], 1)
+
+
+if __name__ == "__main__":
+    unittest.main()
